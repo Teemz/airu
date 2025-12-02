@@ -1,0 +1,19 @@
+{
+  "name": "airu-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend-chat-widget",
+    "admin-panel"
+  ],
+  "scripts": {
+    "backend:dev": "cd backend && npm run dev",
+    "widget:dev": "cd frontend-chat-widget && npm run dev",
+    "admin:dev": "cd admin-panel && npm run dev",
+    "dev": "concurrently \"npm run backend:dev\" \"npm run widget:dev\" \"npm run admin:dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
