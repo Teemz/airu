@@ -26,7 +26,7 @@ ${contexts}`;
       'HTTP-Referrer': 'https://airu.app'
     },
     body: JSON.stringify({
-      model: 'x-ai/grok-beta',
+      model: 'x-ai/grok-4.1-fast:free',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: message }

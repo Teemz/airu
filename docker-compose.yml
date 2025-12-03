@@ -15,7 +15,7 @@ services:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql  # optional
 
   backend:
-    image: node:20-alpine
+    image: node:20
     working_dir: /app
     volumes:
       - ./backend:/app

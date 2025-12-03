@@ -74,6 +74,19 @@ router.post('/knowledge', auth, async (req, res) => {
   }
 });
 
+// GET /business/knowledge - Список знаний бизнеса
+router.get('/knowledge', auth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, content, created_at FROM knowledge WHERE business_id = $1 ORDER BY created_at DESC',
+      [req.user.id]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 // GET /business/knowledge/search?query=... (protected)
 router.get('/knowledge/search', auth, async (req, res) => {
   try {

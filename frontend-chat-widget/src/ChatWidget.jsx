@@ -19,7 +19,7 @@ const ChatWidget = ({ businessId }) => {
     setInput('');
 
     try {
-      const response = await fetch(`/api/chat/${businessId}`, {
+      const response = await fetch(`/api/public/chat/${businessId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage }),

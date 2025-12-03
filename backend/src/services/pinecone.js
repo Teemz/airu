@@ -1,4 +1,4 @@
-const Pinecone = require('@pinecone-database/pinecone');
+const { Pinecone } = require('@pinecone-database/pinecone');
 
 if (!process.env.PINECONE_API_KEY) {
   console.log('Pinecone not configured, using mock embeddings');
@@ -27,13 +27,11 @@ function mockEmbedding(text) {
 }
 
 async function upsert(vectorId, embedding, metadata) {
-  await index.upsert({
-    vectors: [{
-      id: vectorId,
-      values: embedding,
-      metadata
-    }]
-  });
+  await index.upsert([{
+    id: vectorId,
+    values: embedding,
+    metadata
+  }]);
 }
 
 async function query(queryEmbedding, topK = 5, filter = {}) {

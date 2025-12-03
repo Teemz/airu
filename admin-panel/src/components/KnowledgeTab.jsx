@@ -13,13 +13,13 @@ export default function KnowledgeTab() {
   }, []);
 
   const loadKnowledge = () => {
-    api.get('/knowledge')
+    api.get('/business/knowledge')
       .then((res) => {
         setKnowledge(res.data);
         setLoading(false);
       })
       .catch(() => {
-        setError('Ошибка загрузки списка');
+        setError('Ошибка сервера');
         setLoading(false);
       });
   };
@@ -29,11 +29,11 @@ export default function KnowledgeTab() {
     setUploading(true);
     setError('');
     try {
-      await api.post('/knowledge', { text: text.trim() });
+      await api.post('/business/knowledge', { content: text.trim() });
       setText('');
       loadKnowledge();
     } catch (err) {
-      setError('Ошибка загрузки знания');
+      setError('Ошибка сервера');
     } finally {
       setUploading(false);
     }
@@ -79,9 +79,9 @@ export default function KnowledgeTab() {
           <div className="grid gap-4">
             {knowledge.map((item) => (
               <div key={item.id} className="bg-white p-6 rounded-xl border shadow-sm">
-                <p className="text-gray-900 mb-2 whitespace-pre-wrap">{item.text}</p>
+                <p className="text-gray-900 mb-2 whitespace-pre-wrap">{item.content}</p>
                 <p className="text-sm text-gray-500">
-                  {new Date(item.createdAt).toLocaleDateString('ru-RU')}
+                  {new Date(item.created_at).toLocaleDateString('ru-RU')}
                 </p>
               </div>
             ))}
