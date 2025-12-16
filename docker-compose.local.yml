@@ -13,12 +13,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app_network
 
   redis:
     image: redis:alpine
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - app_network
 
   backend:
     image: node:20
@@ -29,23 +33,62 @@ services:
       - "3001:3001"
     command: sh -c "npm install && npm run dev"
     environment:
+      PORT: 3001
       DB_URL: postgresql://airu:airupass@postgres:5432/airu
       REDIS_URL: redis://redis:6379
       NODE_ENV: development
     depends_on:
       - postgres
       - redis
+    networks:
+      - app_network
 
-  nginx:
-    image: nginx:alpine
-    restart: always
-    volumes:
-      - ./nginx/frontend-chat-widget.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./frontend-chat-widget/dist:/usr/share/nginx/html:ro
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+      - "81:81"
+      - "8080:8080"
+    volumes:
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
     depends_on:
       - backend
+    networks:
+      - app_network
+
+  frontend-widget:
+    image: nginx:alpine
+    volumes:
+      - ./frontend-chat-widget/dist:/usr/share/nginx/html:ro
+      - ./nginx/widget.conf:/etc/nginx/nginx.conf:ro
+    command: nginx -g 'daemon off;'
+    expose:
+      - "80"
+    depends_on:
+      - npm
+    networks:
+      - app_network
+
+  admin-panel:
+    image: nginx:alpine
+    volumes:
+      - ./admin-panel/dist:/usr/share/nginx/html:ro
+      - ./nginx/admin.conf:/etc/nginx/nginx.conf:ro
+    command: nginx -g 'daemon off;'
+    expose:
+      - "80"
+    depends_on:
+      - npm
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
+  npm_data:
+  npm_letsencrypt:
+
+networks:
+  app_network:

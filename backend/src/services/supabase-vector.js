@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+const DIMENSIONS = 1536;
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
   console.log('Supabase not configured, using mock embeddings');
@@ -7,12 +7,22 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
     upsert: async () => {},
     query: async () => []
   };
-  return;
+} else {
+  try {
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+    console.log('Supabase client created successfully');
+    module.exports = {
+      supabase,
+      mockEmbedding,
+      upsert,
+      query
+    };
+  } catch (error) {
+    console.error('Failed to load @supabase/supabase-js:', error.message);
+    throw error;
+  }
 }
-
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-
-const DIMENSIONS = 1536;
 
 function mockEmbedding(text) {
   const embedding = new Array(DIMENSIONS).fill(0.1);
@@ -44,10 +54,3 @@ async function query(queryEmbedding, topK = 5, filter = {}) {
     metadata: row.metadata
   }));
 }
-
-module.exports = {
-  supabase,
-  mockEmbedding,
-  upsert,
-  query
-};

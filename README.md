@@ -58,13 +58,3 @@ docker-compose up -d postgres backend
 
 - Backend: `docker-compose restart backend`
 - Frontend: Ctrl+C в терминалах + `npm run admin:dev` & `npm run widget:dev`
-
-## Окружение (.env в backend/)
-
-Создайте `.env` в `backend/` с:
-```
-DATABASE_URL=postgresql://user:pass@localhost:5432/airu
-OPENROUTER_API_KEY=your_key
-PINECONE_API_KEY=your_key
-PINECONE_ENVIRONMENT=your_env
-JWT_SECRET=your_secret
