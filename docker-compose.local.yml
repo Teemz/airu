@@ -12,7 +12,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql  # optional
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
 
   backend:
     image: node:20
@@ -24,13 +30,22 @@ services:
     command: sh -c "npm install && npm run dev"
     environment:
       DB_URL: postgresql://airu:airupass@postgres:5432/airu
-      SUPABASE_URL: ${SUPABASE_URL}
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      JWT_SECRET: ${JWT_SECRET}
+      REDIS_URL: redis://redis:6379
       NODE_ENV: development
     depends_on:
       - postgres
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./nginx/frontend-chat-widget.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend-chat-widget/dist:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

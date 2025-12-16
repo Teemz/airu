@@ -1,0 +1,13 @@
+{
+  "name": "token-generator",
+  "version": "1.0.0",
+  "description": "Скрипт для генерации JWT токенов для Airu",
+  "main": "generate-token.js",
+  "scripts": {
+    "generate": "node generate-token.js"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^17.2.3"
+  }
+}

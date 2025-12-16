@@ -53,6 +53,15 @@ docker-compose up -d postgres backend
 
 **Тестовый логин Admin:** test@business.com / password
 
+## Генератор JWT токенов
+
+Для генерации JWT токенов для тестирования используйте:
+```bash
+npm run generate-token
+```
+
+Скрипт сгенерирует токен с payload `{ id: 1 }` и сроком действия 24 часа, используя `JWT_SECRET` из `backend/.env`.
+
 ## Перезапуск после изменений .env
 
 - Backend: `docker-compose restart backend`

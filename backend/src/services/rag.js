@@ -1,4 +1,4 @@
-const { mockEmbedding, query } = require('./pinecone');
+const { mockEmbedding, query } = require('./supabase-vector');
 
 async function chat(message, business_id) {
   if (!message || !business_id) {
@@ -26,7 +26,7 @@ ${contexts}`;
       'HTTP-Referrer': 'https://airu.app'
     },
     body: JSON.stringify({
-      model: 'x-ai/grok-4.1-fast:free',
+      model: process.env.AI_MODEL || 'tngtech/deepseek-r1t2-chimera:free',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: message }

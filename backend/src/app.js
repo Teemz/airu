@@ -7,7 +7,7 @@ const helmet = require('helmet');
 const authRouter = require('./auth'); // auth.js routes
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet());

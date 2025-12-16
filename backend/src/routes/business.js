@@ -7,7 +7,7 @@ const pool = new Pool({
 });
 
 const auth = require('../middleware/auth.js');
-const { mockEmbedding, upsert, query: pineconeQuery } = require('../services/pinecone');
+const { generateEmbedding, upsertVectors, queryVectors } = require('../services/supabase-vector');
 
 // GET /business/profile - Получить профиль бизнеса
 router.get('/profile', auth, async (req, res) => {
@@ -59,13 +59,17 @@ router.post('/knowledge', auth, async (req, res) => {
       [req.user.id, content.trim()]
     );
 
-    // Generate mock embedding and upsert to Pinecone
-    const embedding = mockEmbedding(content.trim());
+    // Generate embedding and upsert to Supabase Vector
+    const embedding = await generateEmbedding(content.trim());
     const vectorId = result.rows[0].id.toString();
-    await upsert(vectorId, embedding, {
-      business_id: req.user.id,
-      content: content.trim()
-    });
+    await upsertVectors([{
+      id: vectorId,
+      embedding: embedding,
+      metadata: {
+        business_id: req.user.id,
+        content: content.trim()
+      }
+    }]);
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -95,8 +99,8 @@ router.get('/knowledge/search', auth, async (req, res) => {
       return res.status(400).json({ error: 'Query is required' });
     }
 
-    const queryEmbedding = mockEmbedding(query.trim());
-    const matches = await pineconeQuery(queryEmbedding, 5, { business_id: { $eq: req.user.id } });
+    const queryEmbedding = await generateEmbedding(query.trim());
+    const matches = await queryVectors(queryEmbedding, 5, { business_id: req.user.id });
 
     res.json(matches);
   } catch (error) {
