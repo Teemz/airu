@@ -2,14 +2,15 @@
 
 ## Описание
 
-Monorepo для SAAS приложения с чат-виджетом на базе ИИ (OpenRouter via OpenAI SDK, Pinecone, PostgreSQL).
+Monorepo для SAAS приложения с чат-виджетом на базе ИИ (OpenRouter via OpenAI SDK, Supabase, PostgreSQL).
 
 **Архитектура:**
 - Backend: Node.js/Express
 - Frontend Widget: React (Vite)
 - Admin Panel: React (Vite)
 - БД: PostgreSQL
-- Vector DB: Pinecone
+- Vector DB: Supabase
+- Redis как брокер сообщений
 
 ## Структура проекта
 
@@ -49,18 +50,9 @@ docker-compose up -d postgres backend
 
 1. Backend + DB: `docker-compose up -d`
 2. Admin Panel: `npm run admin:dev` (~ http://localhost:5173)
-3. Chat Widget: `npm run widget:dev` (~ http://localhost:5174+)
+3. Chat Widget: `npm run widget:dev` (~ http://localhost:5174)
 
 **Тестовый логин Admin:** test@business.com / password
-
-## Генератор JWT токенов
-
-Для генерации JWT токенов для тестирования используйте:
-```bash
-npm run generate-token
-```
-
-Скрипт сгенерирует токен с payload `{ id: 1 }` и сроком действия 24 часа, используя `JWT_SECRET` из `backend/.env`.
 
 ## Перезапуск после изменений .env
 
