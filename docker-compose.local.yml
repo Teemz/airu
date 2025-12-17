@@ -25,7 +25,7 @@ services:
       - app_network
 
   backend:
-    image: node:20
+    image: node:22-alpine
     working_dir: /app
     volumes:
       - ./backend:/app
