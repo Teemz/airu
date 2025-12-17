@@ -2,7 +2,8 @@
 
 ## Описание
 
-SAAS приложения с чат-виджетом на базе ИИ (OpenRouter via OpenAI SDK, Supabase, PostgreSQL).
+SAAS приложения с чат-виджетом и возможностью загружать свои знания о бизнесе по принципу RAG на базе ИИ (OpenRouter via OpenAI SDK, Supabase, PostgreSQL).
+Встраивание чат виджета на любой сайт через добавление в <header> 
 
 **Архитектура:**
 - Backend: Node.js/Express
@@ -52,15 +53,16 @@ docker-compose -f docker-compose.local.yml up -d postgres backend
 
 Для локального тестирования с использованием Nginx Proxy Manager (NPM) выполните следующие шаги:
 
+* **Локальная разработка с Docker Compose:**
+* Сборка`docker-compose -f docker-compose.local.yml up -d --build`
+* Запуск сервисов: `docker-compose -f docker-compose.local.yml up -d`
+* Перезапуск бэкенда: `docker-compose -f docker-compose.local.yml restart backend`
+* Остановка сервисов: `docker-compose -f docker-compose.local.yml down`
+
 1. **Сборка фронтендов:**
    ```bash
    npm run build:widget
    npm run build:admin
-   ```
-
-2. **Запуск сервисов:**
-   ```bash
-   docker-compose -f docker-compose.local.yml up -d
    ```
 
 3. **Настройка hosts файла:**
@@ -91,21 +93,6 @@ docker-compose -f docker-compose.local.yml up -d postgres backend
    - Откройте `http://widget.airu.local` в браузере для доступа к чат-виджету.
    - Откройте `http://admin.airu.local` в браузере для доступа к административной панели.
 
-**Остановка сервисов:**
-```bash
-docker-compose -f docker-compose.local.yml down
-```
-
-## Production Deployment
-
-For production deployment:
-
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-To stop:
-
-```bash
-docker-compose -f docker-compose.prod.yml down
-```
+* **Развертывание в продакшене с Docker Compose:**
+* Запуск сервисов: `docker-compose -f docker-compose.prod.yml up -d`
+* Остановка сервисов: `docker-compose -f docker-compose.prod.yml down`
