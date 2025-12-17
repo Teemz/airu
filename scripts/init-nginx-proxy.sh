@@ -13,8 +13,6 @@ TOKEN=$(curl -s -X POST http://nginx-proxy-manager:81/api/tokens \
   -H "Content-Type: application/json" \
   -d '{"identity":"admin@example.com","secret":"changeme"}' | jq -r '.token')
 
-
-
 if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
   echo "Failed to authenticate with Nginx Proxy Manager"
   exit 1
