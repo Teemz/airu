@@ -2,7 +2,7 @@
 
 ## Описание
 
-Monorepo для SAAS приложения с чат-виджетом на базе ИИ (OpenRouter via OpenAI SDK, Supabase, PostgreSQL).
+SAAS приложения с чат-виджетом на базе ИИ (OpenRouter via OpenAI SDK, Supabase, PostgreSQL).
 
 **Архитектура:**
 - Backend: Node.js/Express
@@ -45,12 +45,6 @@ docker-compose -f docker-compose.local.yml down  # остановка
 ```bash
 docker-compose -f docker-compose.local.yml up -d postgres backend
 ```
-
-## Полный стек разработки
-
-1. Backend + DB: `docker-compose -f docker-compose.local.yml up -d`
-2. Admin Panel: `npm run admin:dev` (~ http://localhost:5173)
-3. Chat Widget: `npm run widget:dev` (~ http://localhost:5174)
 
 **Тестовый логин Admin:** test@business.com / password
 
