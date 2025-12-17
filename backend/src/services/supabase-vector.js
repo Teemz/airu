@@ -1,29 +1,6 @@
 const DIMENSIONS = 1536;
 
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-  console.log('Supabase not configured, using mock embeddings');
-  module.exports = {
-    mockEmbedding,
-    upsert: async () => {},
-    query: async () => []
-  };
-} else {
-  try {
-    const { createClient } = require('@supabase/supabase-js');
-    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-    console.log('Supabase client created successfully');
-    module.exports = {
-      supabase,
-      mockEmbedding,
-      upsert,
-      query
-    };
-  } catch (error) {
-    console.error('Failed to load @supabase/supabase-js:', error.message);
-    throw error;
-  }
-}
-
+// Function to generate a mock embedding
 function mockEmbedding(text) {
   const embedding = new Array(DIMENSIONS).fill(0.1);
   for (let i = 0; i < Math.min(text.length, DIMENSIONS); i++) {
@@ -32,13 +9,7 @@ function mockEmbedding(text) {
   return embedding;
 }
 
-async function upsert(vectorId, embedding, metadata) {
-  const { error } = await supabase
-    .from('vectors')
-    .upsert({ id: vectorId, embedding, metadata });
-  if (error) throw error;
-}
-
+// Function to query vectors from Supabase
 async function query(queryEmbedding, topK = 5, filter = {}) {
   // Игнорируем filter для простоты; можно расширить позже
   const embeddingStr = queryEmbedding.join(',');
@@ -53,4 +24,39 @@ async function query(queryEmbedding, topK = 5, filter = {}) {
     score: row.score,
     metadata: row.metadata
   }));
+}
+
+// Check for Supabase configuration
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.log('Supabase not configured, using mock embeddings');
+  module.exports = {
+    generateEmbedding: mockEmbedding,
+    upsertVectors: async () => {},
+    query: async () => []
+  };
+} else {
+  try {
+    const { createClient } = require('@supabase/supabase-js');
+    // Use the service role key for backend operations
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+    console.log('Supabase client created successfully with service role.');
+
+    // Function to upsert vectors into Supabase
+    async function upsertVectors(vectors) {
+        const { error } = await supabase
+            .from('vectors')
+            .upsert(vectors); // Batch upsert
+        if (error) throw error;
+    }
+
+    module.exports = {
+      supabase,
+      generateEmbedding: mockEmbedding, // Exporting the mock for now
+      upsertVectors,
+      query
+    };
+  } catch (error) {
+    console.error('Failed to load @supabase/supabase-js:', error.message);
+    throw error;
+  }
 }

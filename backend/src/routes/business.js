@@ -76,31 +76,42 @@ router.put('/profile', auth, async (req, res) => {
 
 // POST /business/knowledge - Добавить knowledge (text)
 router.post('/knowledge', auth, async (req, res) => {
+  console.log('POST /business/knowledge called with body:', req.body, 'user:', req.user);
   try {
     const { content } = req.body;
     if (!content || content.trim().length === 0) {
+      console.log('Content is required');
       return res.status(400).json({ error: 'Content is required' });
     }
+    console.log('Inserting into knowledge:', req.user.id, content.trim());
     const result = await pool.query(
       'INSERT INTO knowledge (business_id, content) VALUES ($1, $2) RETURNING id, business_id, content, created_at',
       [req.user.id, content.trim()]
     );
+    console.log('Inserted:', result.rows[0]);
 
     // Generate embedding and upsert to Supabase Vector
-    const embedding = await generateEmbedding(content.trim());
-    const vectorId = result.rows[0].id.toString();
-    await upsertVectors([{
-      id: vectorId,
-      embedding: embedding,
-      metadata: {
-        business_id: req.user.id,
-        content: content.trim()
-      }
-    }]);
+    try {
+      const embedding = await generateEmbedding(content.trim());
+      const vectorId = result.rows[0].id.toString();
+      console.log('Upserting vector:', vectorId);
+      await upsertVectors([{
+        id: vectorId,
+        embedding: embedding,
+        metadata: {
+          business_id: req.user.id,
+          content: content.trim()
+        }
+      }]);
+      console.log('Upserted successfully');
+    } catch (vectorError) {
+      console.error('Error upserting vector:', vectorError);
+      // Continue without failing the request
+    }
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error(error);
+    console.error('Error in POST /business/knowledge:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });

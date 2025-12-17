@@ -25,19 +25,20 @@ export default function KnowledgeTab() {
   };
 
   const handleUpload = async () => {
-    if (!text.trim()) return;
-    setUploading(true);
-    setError('');
-    try {
-      await api.post('/business/knowledge', { content: text.trim() });
-      setText('');
-      loadKnowledge();
-    } catch (err) {
-      setError('Ошибка сервера');
-    } finally {
-      setUploading(false);
-    }
-  };
+   if (!text.trim()) return;
+   setUploading(true);
+   setError('');
+   try {
+     const response = await api.post('/business/knowledge', { content: text.trim() });
+     setText('');
+     // Add the new knowledge to the state without reloading
+     setKnowledge(prev => [response.data, ...prev]);
+   } catch (err) {
+     setError('Ошибка сервера');
+   } finally {
+     setUploading(false);
+   }
+ };
 
   if (loading) {
     return <div className="text-center py-12 text-gray-500">Загрузка знаний...</div>;

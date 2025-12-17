@@ -75,7 +75,7 @@ services:
     networks:
       - app_network
 
-  frontend-widget:
+  frontend-chat-widget:
     image: nginx:alpine
     volumes:
       - ./frontend-chat-widget/dist:/usr/share/nginx/html:ro
@@ -94,6 +94,8 @@ services:
       - ./admin-panel/dist:/usr/share/nginx/html:ro
       - ./nginx/admin.conf:/etc/nginx/nginx.conf:ro
     command: nginx -g 'daemon off;'
+    ports:
+      - "8081:80"
     expose:
       - "80"
     depends_on:

@@ -37,12 +37,12 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 
 // Routes
-app.use('/auth', authRouter);
+app.use('/api/auth', authRouter);
 const businessRouter = require('./routes/business');
-app.use('/business', businessRouter);
+app.use('/api/business', businessRouter);
 
 const chatRouter = require('./routes/chat');
-app.use('/chat', chatRouter);
+app.use('/api/chat', chatRouter);
 
 const publicChatRouter = require('./routes/public-chat');
 app.use('/public/chat', publicChatRouter);
