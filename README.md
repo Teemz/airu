@@ -47,7 +47,7 @@ docker-compose -f docker-compose.local.yml down  # остановка
 docker-compose -f docker-compose.local.yml up -d postgres backend
 ```
 
-**Тестовый логин Admin:** test@business.com / password
+
 
 ## Локальное тестирование с Nginx Proxy Manager
 

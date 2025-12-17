@@ -4,10 +4,8 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: always
-    environment:
-      POSTGRES_DB: airu
-      POSTGRES_USER: airu
-      POSTGRES_PASSWORD: airupass
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
@@ -27,6 +25,8 @@ services:
   backend:
     image: node:22-alpine
     working_dir: /app
+    env_file:
+      - .env
     volumes:
       - ./backend:/app
     ports:
@@ -34,7 +34,6 @@ services:
     command: sh -c "npm install && npm run dev"
     environment:
       PORT: 3001
-      DB_URL: postgresql://airu:airupass@postgres:5432/airu
       REDIS_URL: redis://redis:6379
       NODE_ENV: development
     depends_on:

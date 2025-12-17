@@ -11,7 +11,7 @@ echo "Nginx Proxy Manager is ready. Starting configuration..."
 # Login to get token
 TOKEN=$(curl -s -X POST http://nginx-proxy-manager:81/api/tokens \
   -H "Content-Type: application/json" \
-  -d '{"identity":"admin@example.com","secret":"changeme"}' | jq -r '.token')
+  -d '{"identity":"${NPM_IDENTITY}","secret":"${NPM_PASSWORD}"}' | jq -r '.token')
 
 if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
   echo "Failed to authenticate with Nginx Proxy Manager"
