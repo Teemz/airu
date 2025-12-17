@@ -6,6 +6,17 @@ const helmet = require('helmet');
 
 const authRouter = require('./auth'); // auth.js routes
 
+const { Queue } = require('bullmq');
+
+const docProcessingQueue = new Queue('doc-processing', {
+    connection: {
+      host: process.env.REDIS_HOST || 'redis',
+      port: process.env.REDIS_PORT || 6379
+    }
+});
+
+module.exports = { docProcessingQueue };
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 

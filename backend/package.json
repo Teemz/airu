@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app.js",
+    "worker": "node src/worker.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -22,7 +23,9 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "openai": "^6.9.1",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "bullmq": "^5.7.7",
+    "redis": "^4.6.13"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

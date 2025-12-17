@@ -8,6 +8,33 @@ const pool = new Pool({
 
 const auth = require('../middleware/auth.js');
 const { generateEmbedding, upsertVectors, queryVectors } = require('../services/supabase-vector');
+const { docProcessingQueue } = require('../app'); // Import the queue
+
+// POST /business/add-test-job - Добавить тестовое задание в очередь
+router.post('/add-test-job', auth, async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message || message.trim().length === 0) {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const job = await docProcessingQueue.add('test-job', {
+      businessId: req.user.id,
+      content: message.trim(),
+      timestamp: new Date().toISOString()
+    });
+
+    console.log(`Job ${job.id} added to queue with message: "${message}"`);
+    res.status(202).json({
+      status: 'Job added',
+      jobId: job.id,
+      message: `Test job with ID ${job.id} added to queue.`
+    });
+  } catch (error) {
+    console.error('Error adding job to queue:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // GET /business/profile - Получить профиль бизнеса
 router.get('/profile', auth, async (req, res) => {
