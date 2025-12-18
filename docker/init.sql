@@ -1,15 +1,42 @@
--- Initialize businesses table for authentication
-CREATE TABLE IF NOT EXISTS businesses (
-  id SERIAL PRIMARY KEY,
+-- Initialize tariffs table
+CREATE TABLE IF NOT EXISTS tariffs (
+  tariff_id SERIAL PRIMARY KEY,
+  tariff_name VARCHAR(255) NOT NULL,
+  max_businesses INTEGER,
+  features JSONB DEFAULT '{}'
+);
+
+-- Initialize users table
+CREATE TABLE IF NOT EXISTS users (
+  user_id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  name VARCHAR(255),
+  tariff_id INTEGER REFERENCES tariffs(tariff_id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- Initialize knowledge table for business knowledge storage
+
+-- Initialize businesses table
+CREATE TABLE IF NOT EXISTS businesses (
+  business_id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+  business_name VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Initialize knowledge table
 CREATE TABLE IF NOT EXISTS knowledge (
-  id SERIAL PRIMARY KEY,
-  business_id INTEGER REFERENCES businesses(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
+  knowledge_id SERIAL PRIMARY KEY,
+  business_id INTEGER REFERENCES businesses(business_id) ON DELETE CASCADE,
+  knowledge_title VARCHAR(255),
+  content_type VARCHAR(50) DEFAULT 'text',
+  file_path VARCHAR(500),
+  chroma_id VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Insert tariffs
+INSERT INTO tariffs (tariff_name, max_businesses, features) VALUES
+('Стартап', 1, '{"file_upload": false}'),
+('Основатель', 5, '{"file_upload": true}'),
+('Холдинг', 15, '{"file_upload": true}'),
+('Партнер', NULL, '{"file_upload": true}') ON CONFLICT DO NOTHING;

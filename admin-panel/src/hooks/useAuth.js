@@ -34,6 +34,16 @@ export const useAuth = () => {
     }
   };
 
+  const register = async (email, password, confirmPassword) => {
+    try {
+      const res = await api.post('/auth/register', { email, password, confirmPassword });
+      return { success: true, message: res.data.message || 'Регистрация успешна' };
+    } catch (err) {
+      console.error(err);
+      return { success: false, error: err.response?.data?.error || 'Ошибка регистрации' };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
@@ -42,5 +52,5 @@ export const useAuth = () => {
 
   const isAuthenticated = !!user && !loading;
 
-  return { user, loading, isAuthenticated, login, logout };
+  return { user, loading, isAuthenticated, login, logout, register };
 };

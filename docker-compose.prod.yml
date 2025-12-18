@@ -17,6 +17,14 @@ services:
     networks:
       - app_network
 
+  chroma:
+    image: chromadb/chroma:latest
+    restart: unless-stopped
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - app_network
+
   backend:
     build:
       context: .
@@ -95,6 +103,7 @@ volumes:
   postgres_data:
   nginx_proxy_manager_data:
   nginx_proxy_manager_letsencrypt:
+  chroma_data:
 
 networks:
   app_network:

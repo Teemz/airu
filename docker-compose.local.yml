@@ -22,13 +22,23 @@ services:
     networks:
       - app_network
 
+  chroma:
+    image: chromadb/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - app_network
+
   backend:
-    image: node:22-alpine
+    image: node:22
     working_dir: /app
     env_file:
       - .env
     volumes:
       - ./backend:/app
+      - backend_node_modules:/app/node_modules
     ports:
       - "3001:3001"
     command: sh -c "npm install && npm run dev"
@@ -43,7 +53,7 @@ services:
       - app_network
 
   worker:
-    image: node:22-alpine
+    image: node:22
     working_dir: /app
     env_file:
       - .env
@@ -107,6 +117,8 @@ volumes:
   postgres_data:
   npm_data:
   npm_letsencrypt:
+  chroma_data:
+  backend_node_modules:
 
 networks:
   app_network:
