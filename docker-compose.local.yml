@@ -19,6 +19,8 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
     networks:
       - app_network
 
@@ -115,6 +117,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
   npm_data:
   npm_letsencrypt:
   chroma_data:
