@@ -138,7 +138,7 @@ router.post('/add-test-job', auth, async (req, res) => {
 router.get('/profile', auth, async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT business_id, business_name FROM businesses WHERE user_id = $1',
+      'SELECT b.business_id, b.business_name, u.email FROM businesses b JOIN users u ON b.user_id = u.user_id WHERE b.user_id = $1',
       [req.user.user_id]
     );
     if (result.rows.length === 0) {
@@ -151,21 +151,38 @@ router.get('/profile', auth, async (req, res) => {
   }
 });
 
-// PUT /business/profile - Обновить профиль бизнеса (business_name)
 router.put('/profile', auth, async (req, res) => {
   try {
-    const { business_name } = req.body;
+    const { business_name, email } = req.body;
+
     if (!business_name || business_name.trim().length === 0) {
-      return res.status(400).json({ error: 'Name is required' });
+      return res.status(400).json({ error: 'Business name is required' });
     }
-    const result = await pool.query(
+    if (!email || email.trim().length === 0) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Update business name
+    const businessResult = await pool.query(
       'UPDATE businesses SET business_name = $1 WHERE user_id = $2 RETURNING business_id, business_name',
       [business_name.trim(), req.user.user_id]
     );
-    if (result.rows.length === 0) {
+
+    if (businessResult.rows.length === 0) {
       return res.status(404).json({ error: 'Business not found' });
     }
-    res.json(result.rows[0]);
+
+    // Update user email
+    await pool.query(
+      'UPDATE users SET email = $1 WHERE user_id = $2',
+      [email.trim(), req.user.user_id]
+    );
+
+    res.json({
+      ...businessResult.rows[0],
+      email: email.trim(),
+    });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error' });

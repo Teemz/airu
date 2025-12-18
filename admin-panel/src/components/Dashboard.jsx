@@ -23,7 +23,7 @@ export default function Dashboard() {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">Панель администратора</h1>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700">Привет, {user?.name || user?.email || 'Админ'}</span>
+              <span className="text-gray-700">Привет, {user?.business_name || user?.email || 'Админ'}</span>
               <button 
                 onClick={logout}
                 className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"

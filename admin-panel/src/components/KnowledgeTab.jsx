@@ -79,8 +79,8 @@ export default function KnowledgeTab() {
         ) : (
           <div className="grid gap-4">
             {knowledge.map((item) => (
-              <div key={item.id} className="bg-white p-6 rounded-xl border shadow-sm">
-                <p className="text-gray-900 mb-2 whitespace-pre-wrap">{item.content}</p>
+              <div key={item.knowledge_id} className="bg-white p-6 rounded-xl border shadow-sm">
+                <p className="text-gray-900 mb-2 whitespace-pre-wrap">{item.knowledge_title || item.content}</p>
                 <p className="text-sm text-gray-500">
                   {new Date(item.created_at).toLocaleDateString('ru-RU')}
                 </p>

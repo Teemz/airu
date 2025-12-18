@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api.js';
 
 export default function ProfileTab() {
-  const [profile, setProfile] = useState({ name: '', email: '' });
+  const [profile, setProfile] = useState({ business_name: '', email: '' });
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -52,8 +52,8 @@ export default function ProfileTab() {
           </label>
           <input
             type="text"
-            value={profile.name}
-            onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+            value={profile.business_name || ''}
+            onChange={(e) => setProfile({ ...profile, business_name: e.target.value })}
             disabled={!editing}
             className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition ${
               editing ? 'border-gray-300' : 'bg-white border-gray-200 cursor-not-allowed'

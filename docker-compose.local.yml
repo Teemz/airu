@@ -119,7 +119,9 @@ volumes:
   postgres_data:
   redis_data:
   npm_data:
+    external: true
   npm_letsencrypt:
+    external: true
   chroma_data:
   backend_node_modules:
 

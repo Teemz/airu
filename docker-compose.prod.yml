@@ -79,7 +79,7 @@ services:
     networks:
       - app_network
 
-  nginx-proxy-manager:
+  npm:
     image: jc21/nginx-proxy-manager:latest
     restart: unless-stopped
     ports:
@@ -90,8 +90,8 @@ services:
       DB_SQLITE_FILE: "/data/database.sqlite"
       DISABLE_IPV6: "true"
     volumes:
-      - nginx_proxy_manager_data:/data
-      - nginx_proxy_manager_letsencrypt:/etc/letsencrypt
+      - npm_data:/data
+      - npm_letsencrypt:/etc/letsencrypt
     depends_on:
       - backend
       - admin-panel
@@ -101,8 +101,10 @@ services:
 
 volumes:
   postgres_data:
-  nginx_proxy_manager_data:
-  nginx_proxy_manager_letsencrypt:
+  npm_data:
+    external: true
+  npm_letsencrypt:
+    external: true
   chroma_data:
 
 networks:

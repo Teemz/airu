@@ -15,13 +15,15 @@ class ChromaService {
     try {
       const response = await this.client.post('/api/v1/collections', {
         name: collectionName,
+        get_or_create: true,
       });
       return response.data;
     } catch (error) {
       if (error.response?.status === 409) {
-        // Коллекция уже существует
+        // Fallback for older versions that don't support get_or_create
         return null;
       }
+      console.error('Error in createCollection:', error.response?.data || error.message);
       throw error;
     }
   }
