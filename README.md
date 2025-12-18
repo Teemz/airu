@@ -2,7 +2,7 @@
 
 ## Описание
 
-SAAS приложения с чат-виджетом и возможностью загружать свои знания о бизнесе по принципу RAG на базе ИИ (OpenRouter via OpenAI SDK, Supabase, PostgreSQL).
+SAAS приложения с чат-виджетом и возможностью загружать свои знания о бизнесе по принципу RAG на базе ИИ.
 Встраивание чат виджета на любой сайт через js скриптом
 
 **Архитектура:**
@@ -10,7 +10,7 @@ SAAS приложения с чат-виджетом и возможностью
 - Frontend Widget: React (Vite)
 - Admin Panel: React (Vite)
 - БД: PostgreSQL
-- Vector DB: Supabase
+- Vector DB: Chroma
 - Redis как брокер сообщений
 
 ## Структура проекта
@@ -25,13 +25,6 @@ SAAS приложения с чат-виджетом и возможностью
 ```bash
 npm install
 ```
-
-## Запуск разработки
-
-- Backend: `npm run backend:dev`
-- Widget: `npm run widget:dev`
-- Admin: `npm run admin:dev`
-- Frontend (admin + widget): `npm run admin:dev` & `npm run widget:dev` (новые терминалы)
 
 ## Docker (Backend + Postgres)
 
@@ -88,6 +81,15 @@ docker-compose -f docker-compose.local.yml up -d postgres backend
      - Domain Names: `admin.airu.local`
      - Forward Hostname / IP: `admin-panel`
      - Forward Port: `80`
+   - Создайте новый прокси-хост для `api.airu.local`:
+     - Domain Names: `api.airu.local`
+     - Forward Hostname / IP: `backend`
+     - Forward Port: `80`
+   
+   Или запуск срипта 
+   ```bash
+   scripts/init-nginx-proxy.sh
+   ```
 
 6. **Тестирование настройки:**
    - Откройте `http://widget.airu.local` в браузере для доступа к чат-виджету.
