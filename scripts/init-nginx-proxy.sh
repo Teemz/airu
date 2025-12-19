@@ -9,12 +9,15 @@ done
 echo "Nginx Proxy Manager is ready. Starting configuration..."
 
 # Login to get token
-TOKEN=$(curl -s -X POST http://localhost:81/api/tokens \
+TOKEN_RESPONSE=$(curl -s -X POST http://localhost:81/api/tokens \
   -H "Content-Type: application/json" \
-  -d '{"identity":"${NPM_IDENTITY}","secret":"${NPM_PASSWORD}"}' | jq -r '.token')
+  -d "{\"identity\":\"${NPM_IDENTITY}\",\"secret\":\"${NPM_PASSWORD}\"}")
+
+TOKEN=$(echo "$TOKEN_RESPONSE" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
 
 if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
   echo "Failed to authenticate with Nginx Proxy Manager"
+  echo "Response: $TOKEN_RESPONSE"
   exit 1
 fi
 

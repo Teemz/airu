@@ -40,3 +40,16 @@ INSERT INTO tariffs (tariff_name, max_businesses, features) VALUES
 ('Основатель', 5, '{"file_upload": true}'),
 ('Холдинг', 15, '{"file_upload": true}'),
 ('Партнер', NULL, '{"file_upload": true}') ON CONFLICT DO NOTHING;
+
+-- Insert test user: test@business / password
+-- Password hash for 'password' using bcrypt with 10 rounds
+INSERT INTO users (email, password_hash, tariff_id) VALUES
+('test@business', '$2b$10$fvBaleG5fF3iCCfsRrkIAOw2BimOxTyVqr9oqqNraxfN64k43X/g6', 1) 
+ON CONFLICT (email) DO UPDATE SET 
+  password_hash = EXCLUDED.password_hash,
+  tariff_id = EXCLUDED.tariff_id;
+
+-- Create test business for test user
+INSERT INTO businesses (user_id, business_name) 
+SELECT user_id, 'Test Business' FROM users WHERE email = 'test@business'
+ON CONFLICT DO NOTHING;

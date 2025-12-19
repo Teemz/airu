@@ -1,17 +1,19 @@
-const { mockEmbedding, query } = require('./supabase-vector');
+const { chromaService } = require('./chroma');
 
 async function chat(message, business_id) {
   if (!message || !business_id) {
     throw new Error('Message and business_id required');
   }
 
-  const queryEmbedding = mockEmbedding(message);
-  const matches = await query(queryEmbedding, 5, { business_id: { $eq: Number(business_id) } });
+  const collectionName = `business_${business_id}`;
+  
+  try {
+    const results = await chromaService.queryCollection(collectionName, message, 5);
 
-  const contexts = matches.slice(0, 3)
-    .map(match => match.metadata?.content || '')
+  const contexts = results.documents?.slice(0, 3)
+    .map(doc => doc || '')
     .filter(c => c)
-    .join('\n\n');
+    .join('\n\n') || '';
 
   const systemPrompt = `You are a helpful assistant for the business. Answer the user's question using ONLY the following context from the business knowledge base. If the context does not contain relevant information or you cannot answer confidently, respond with: "Извините, у меня нет информации по этому вопросу." Do not make up information.
 
@@ -47,6 +49,11 @@ ${contexts}`;
   }
 
   return data.choices[0].message.content.trim();
+  } catch (error) {
+    console.error('Error in chat function:', error.message);
+    // Return a fallback response if Chroma query fails
+    return 'Извините, у меня нет информации по этому вопросу.';
+  }
 }
 
 module.exports = { chat };
